@@ -23,7 +23,11 @@ public:
   * A helper method to calculate RMSE.
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
-
+  
+	/**
+  * A helper method to wrap an angle into [-pi, pi]
+  */
+	VectorXd::WrapAngle(double phi);
 };
 
 #endif /* TOOLS_H_ */

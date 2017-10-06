@@ -3,6 +3,7 @@
 
 #include "measurement_package.h"
 #include "Eigen/Dense"
+#include "tools.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -27,10 +28,25 @@ public:
 
   ///* state covariance matrix
   MatrixXd P_;
+	
+	///* laser measurement noise matrix
+  MatrixXd R_laser_;
+	
+	///* radar measurement noise matrix
+  MatrixXd R_radar_;
+	
+	///* measurement covariance matrix
+  MatrixXd S_;	
 
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
 
+	///* sigma points
+  MatrixXd Xsig_;
+	
+	///* augmented sigma points
+  MatrixXd Xsig_aug_;
+	
   ///* time when the state is true, in us
   long long time_us_;
 
@@ -67,6 +83,14 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+	///* NIS for laser
+	double NIS_laser_;
+
+	///* NIS for radar
+	double NIS_radar_;	
+	
+	///* helper functions
+	Tools tools_;
 
   /**
    * Constructor
@@ -84,6 +108,21 @@ public:
    */
   void ProcessMeasurement(MeasurementPackage meas_package);
 
+	 /**
+   * AugmentedSigmaPoints
+   */
+	void UKF::AugmentedSigmaPoints();
+	 
+	 /**
+   * SigmaPointPrediction
+   */
+	void UKF::SigmaPointPrediction(double delta_t);
+	
+	/**
+   * PredictMeanAndCovariance
+   */
+	void UKF::PredictMeanAndCovariance();
+	
   /**
    * Prediction Predicts sigma points, the state, and the state covariance
    * matrix
@@ -91,17 +130,33 @@ public:
    */
   void Prediction(double delta_t);
 
+	/**
+   * PredictRadarMeasurement
+   */
+	void PredictRadarMeasurement();
+	
+	/**
+   * PredictLaserMeasurement
+   */	
+	void PredictLaserMeasurement();
+	
   /**
-   * Updates the state and the state covariance matrix using a laser measurement
+   * UpdateLaser
    * @param meas_package The measurement at k+1
    */
-  void UpdateLidar(MeasurementPackage meas_package);
+  void UpdateLaser(MeasurementPackage meas_package);
 
   /**
-   * Updates the state and the state covariance matrix using a radar measurement
+   * UpdateRadar
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+	
+	/**
+	* UpdateState
+	* @param n_z Dimension for measurement state (laser=2, radar=3)
+	*/
+	void UKF::UpdateState(int n_z);
 };
 
 #endif /* UKF_H */
