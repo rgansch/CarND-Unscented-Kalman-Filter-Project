@@ -1,0 +1,15 @@
+{
+	"UKF" : {
+		"radar_enabled" : 0,
+		"laser_enabled" : 1,
+		"std_a" : 0.2,
+		"std_yawdd" : 0.2,
+		"std_laspx" : 0.15,
+		"std_laspy" : 0.15,
+		"std_radr" : 0.3,
+		"std_radphi" : 0.03,
+		"std_radrd" : 0.3,
+		"n_x" : 5,
+		"n_aug" : 7
+	}
+}

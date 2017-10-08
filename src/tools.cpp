@@ -44,7 +44,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	return rmse;
 }
 
-VectorXd::WrapAngle(double phi) {
+double Tools::WrapAngle(double phi) {
   while (phi > M_PI) {
     phi -= 2.*M_PI;
   };

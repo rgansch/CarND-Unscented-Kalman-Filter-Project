@@ -1,5 +1,6 @@
 #include <uWS/uWS.h>
 #include <iostream>
+#include <fstream>
 #include "json.hpp"
 #include <math.h>
 #include "ukf.h"
@@ -38,6 +39,11 @@ int main()
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
 
+	std::ofstream datfile;
+  datfile.open("../data/datalog.dat", std::ios_base::out);
+  datfile << "time,sensortype," << "gt_x,gt_y,gt_vx,gt_vy," << "est_x,est_y,est_vx,est_vy," << "rmse_x,rmse_y,rmse_vx,rmse_vy," << "nis\n";
+  datfile.close();
+	
   h.onMessage([&ukf,&tools,&estimations,&ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -139,7 +145,35 @@ int main()
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-	  
+			   
+				  // Write data to logfile if sensor is enabled
+				  if((meas_package.sensor_type_ == MeasurementPackage::RADAR && ukf.radar_enabled_) ||
+						 (meas_package.sensor_type_ == MeasurementPackage::LASER && ukf.laser_enabled_)) {
+						// write data to stringstream
+						std::stringstream ss;
+						ss << std::fixed << std::setprecision(3);
+						ss << timestamp << ','
+							 << ((meas_package.sensor_type_==MeasurementPackage::RADAR) ? ("RADAR") : ("LASER")) << ','
+							 << gt_values(0) << ','
+							 << gt_values(1) << ','
+							 << gt_values(2) << ','
+							 << gt_values(3) << ','
+							 << estimate(0) << ','
+							 << estimate(1) << ','
+							 << estimate(2) << ','
+							 << estimate(3) << ','
+							 << RMSE(0) << ','
+							 << RMSE(1) << ','
+							 << RMSE(2) << ','
+							 << RMSE(3) << ','
+							 << ((meas_package.sensor_type_==MeasurementPackage::RADAR) ? (ukf.NIS_radar_) : (ukf.NIS_laser_));
+						
+						// write data in stringstream to file
+						std::ofstream datfile;
+						datfile.open("../data/datalog.dat", std::ios_base::out | std::ios_base::app);
+						datfile << ss.rdbuf() << std::endl;
+						datfile.close(); 
+					}
         }
       } else {
         

@@ -18,10 +18,10 @@ public:
   bool is_initialized_;
 
   ///* if this is false, laser measurements will be ignored (except for init)
-  bool use_laser_;
+  bool laser_enabled_;
 
   ///* if this is false, radar measurements will be ignored (except for init)
-  bool use_radar_;
+  bool radar_enabled_;
 
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
@@ -46,6 +46,15 @@ public:
 	
 	///* augmented sigma points
   MatrixXd Xsig_aug_;
+	
+	///* sigma points in measurement space
+	MatrixXd Zsig_;
+	
+	///* measurement vector
+	VectorXd z_;
+	
+	///* prediticed measurement vector
+	VectorXd z_pred_;
 	
   ///* time when the state is true, in us
   long long time_us_;
@@ -79,6 +88,9 @@ public:
 
   ///* Augmented state dimension
   int n_aug_;
+	
+	///* Number of sigma points
+	int n_sig_;
 
   ///* Sigma point spreading parameter
   double lambda_;
@@ -111,17 +123,17 @@ public:
 	 /**
    * AugmentedSigmaPoints
    */
-	void UKF::AugmentedSigmaPoints();
+	void AugmentedSigmaPoints();
 	 
 	 /**
    * SigmaPointPrediction
    */
-	void UKF::SigmaPointPrediction(double delta_t);
+	void SigmaPointPrediction(double delta_t);
 	
 	/**
    * PredictMeanAndCovariance
    */
-	void UKF::PredictMeanAndCovariance();
+	void PredictMeanAndCovariance();
 	
   /**
    * Prediction Predicts sigma points, the state, and the state covariance
@@ -156,7 +168,7 @@ public:
 	* UpdateState
 	* @param n_z Dimension for measurement state (laser=2, radar=3)
 	*/
-	void UKF::UpdateState(int n_z);
+	void UpdateState(int n_z);
 };
 
 #endif /* UKF_H */

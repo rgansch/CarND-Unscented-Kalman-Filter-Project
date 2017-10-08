@@ -27,7 +27,7 @@ public:
 	/**
   * A helper method to wrap an angle into [-pi, pi]
   */
-	VectorXd::WrapAngle(double phi);
+	double WrapAngle(double phi);
 };
 
 #endif /* TOOLS_H_ */
