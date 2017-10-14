@@ -1,7 +1,7 @@
 {
 	"UKF" : {
 		"radar_enabled" : 1,
-		"laser_enabled" : 1,
+		"laser_enabled" : 0,
 		"std_a" : 0.2,
 		"std_yawdd" : 0.2,
 		"std_laspx" : 0.15,
